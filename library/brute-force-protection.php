@@ -283,13 +283,9 @@
         public static function InitializeBrowserUser()
         {
             // IP
-            $client  = @$_SERVER['HTTP_CLIENT_IP'];
-            $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
-            $remote  = @$_SERVER['REMOTE_ADDR'];
-            if(filter_var($client, FILTER_VALIDATE_IP)) $ip = $client;
-            elseif(filter_var($forward, FILTER_VALIDATE_IP)) $ip = $forward;
-            else $ip = $remote;
-            $intIP = ip2long($ip);
+            $remote = @$_SERVER['REMOTE_ADDR'];
+            if(filter_var($remote, FILTER_FLAG_IPV4)) $intIP = ip2long($remote);
+            else $intIP = 0;
 
             // UserID | Hash
             $userID = (int)$_COOKIE["bfid"];
