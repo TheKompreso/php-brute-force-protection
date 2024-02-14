@@ -26,17 +26,15 @@
             self::$whitelistdata = null;
             $isBan = false;
             self::$intIP = $inputIntIP;
-            if($inputIntIP != 0)
-            {
-                self::$ipdata = self::SelectIP($inputIntIP);
-                if(self::$ipdata)
-                {
-                    if(self::$ipdata['bantime'] > time())
-                    {
-                        self::$isBan = true;
-                    }
-                }
-            }
+			
+			self::$ipdata = self::SelectIP($inputIntIP);
+			if(self::$ipdata)
+			{
+				if(self::$ipdata['bantime'] > time())
+				{
+					self::$isBan = true;
+				}
+			}
 
             if($userID > 0)
             {
@@ -283,9 +281,7 @@
         public static function InitializeBrowserUser()
         {
             // IP
-            $remote = @$_SERVER['REMOTE_ADDR'];
-            if(filter_var($remote, FILTER_FLAG_IPV4)) $intIP = ip2long($remote);
-            else $intIP = 0;
+            $intIP = (int)ip2long(self::GetIP());
 
             // UserID | Hash
             $userID = (int)$_COOKIE["bfid"];
@@ -319,6 +315,13 @@
                 setcookie("bfhash", BruteForceProtection::$userdata['hash'], time()+604800, "/", ".exemple.com", true);
             }
             return;
+        }
+        public static function GetIP()
+        {
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) $ip=$_SERVER['HTTP_CLIENT_IP'];
+            elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) $ip=$_SERVER['HTTP_X_FORWARDED_FOR'];
+            else $ip=$_SERVER['REMOTE_ADDR'];
+            return $ip;
         }
     }
 ?>
